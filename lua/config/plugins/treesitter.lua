@@ -6,32 +6,40 @@ return {
 	  lazy = false,  
     opts = {
       -- 1. Add 'macaulay2' to this list so it installs automatically
-      ensure_installed = { 'bash', 'c', 'cpp', 'javascript', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'go' },
+      ensure_installed = { 'bash', 'c', 'cpp', 'javascript', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'go', 'macaulay2'},
       auto_install = true,
       highlight = {
         enable = true,
       },
+      incremental_selection = {enable = true}, 
       indent = { enable = true },
     },
 
     -- 2. Use a config function to register the local parser
-    config = function(_, opts)
-	    vim.opt.runtimepath:append("~/Desktop/m2treesitter/tree-sitter-macaulay2")
-      local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-
-      parser_config.macaulay2 = {
+       config = function()
+      local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
+vim.opt.runtimepath:prepend(vim.fn.expand("~/Desktop/m2treesitter/tree-sitter-macaulay2"))
+      -- Register macaulay2 parser
+      parser_configs.macaulay2 = {
         install_info = {
-          url = "~/Desktop/m2treesitter/tree-sitter-macaulay2", -- Local path to your repo
-          files = { "src/parser.c" }, -- Note: if you have a scanner.c, add it here like { "src/parser.c", "src/scanner.c" }
-          branch = "main", -- default branch in case of git repo if the url was a git url
-          generate_requires_npm = false, -- if stand-alone parser without npm dependencies
-          requires_generate_from_grammar = false, -- if folder contains pre-generated src/parser.c
+          url = vim.fn.expand("~/Desktop/m2treesitter/tree-sitter-macaulay2"),
+          files = { "src/parser.c", "src/scanner.c" },
+          branch = "main",
+          generate_requires_npm = false,
+          requires_generate_from_grammar = false,
         },
-        filetype = "m2", -- if filetype does not match the parser name
+        filetype = "macaulay2",
       }
 
-      -- 3. Run the standard setup
-      require('nvim-treesitter.configs').setup(opts)
-    end
-  }
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "macaulay2" },
+        highlight = {
+          enable = true,
+          additional_vim_regex_highlighting = false,
+        },
+        indent = {
+          enable = true,
+        },
+      })
+    end,  }
 }
